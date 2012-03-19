@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {margin:0; padding:0}
+			.loading {background:url('loading.gif') no-repeat 50% 0; height:32px}
+			.hidden {display:none}
+		</style>
+		
+		<script src="http://connect.facebook.net/ru_RU/all.js"></script>
+		<script src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script>
+			$(function(){
+				FB.init({
+					appId   : 'APP_ID',
+					status  : true,
+					cookie  : true,
+					oauth   : true,
+					logging : false
+				});
+				
+				window.setTimeout(init, 1000);
+			});
+			
+			function init()
+			{
+				FB.api('/me/accounts', function(response){
+					if (response.data)
+					{
+						var options = '';
+						
+						$.each(response.data,function(_,value){
+							if (value.category == 'Application')
+							{
+								options += '<option value="'+value.id+'">'+value.name+'</option>';
+							}
+						});
+						
+						$('[name=app_id]').html(options);
+						
+						$('#form').show();
+					}
+					else
+					{
+						$('#login').show();
+					}
+					
+					$('#loading').hide();
+				});
+			}
+			
+			function login()
+			{
+				FB.login(function(response){
+					top.location.reload();
+				}, {scope:'manage_pages'});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="fb-root"></div>
+		
+		<div id="loading" class="loading"></div>
+		
+		<div id="login" class="hidden">
+			<button onclick="login()">Login</button>
+		</div>
+		
+		<div id="form" class="hidden">
+			<form action="https://www.facebook.com/dialog/pagetab" method="get" target="_top">
+				<div>Select an application</div>
+				<select name="app_id"></select>
+				<input type="hidden" name="next" value="https://facebook.com/" />
+				<input type="submit" value="Install application" />
+			</form>
+		</div>
+		
+	</body>
+</html>
