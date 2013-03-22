@@ -25,16 +25,13 @@
 			
 			function init()
 			{
-				FB.api('/me/accounts', function(response){
+				FB.api('/me/applications/developer', function(response){
 					if (response.data)
 					{
 						var options = '';
 						
 						$.each(response.data,function(_,value){
-							if (value.category == 'Application')
-							{
-								options += '<option value="'+value.id+'">'+value.name+'</option>';
-							}
+							options += '<option value="'+value.id+'">'+value.name+'</option>';
 						});
 						
 						$('[name=app_id]').html(options);
